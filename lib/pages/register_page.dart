@@ -1,40 +1,52 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:final_project/components/my_button.dart';
+import 'package:final_project/components/my_textfield.dart';
 import 'package:final_project/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/components/my_textfield.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
 
-  const LoginPage({super.key, required this.onTap});
+  const RegisterPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  //text editing controllers
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-  //login method
-  void login() async {
-    //get instance of auth service
+  void register() async {
+    //get auth service
     final _authService = AuthService();
 
-    //try sign in
-    try {
-      await _authService.signInWithEmailPassword(
-          emailController.text, passwordController.text);
+    //check if passwords match -> create user
+    if (passwordController.text == confirmPasswordController.text) {
+      //try creatign user
+      try {
+        await _authService.signUpWithEmailPassword(
+            emailController.text, passwordController.text);
+      }
+
+      //display any errors
+      catch (e) {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(e.toString()),
+          ),
+        );
+      }
     }
-    //catch any errors
-    catch (e) {
+    //if password don't match -> show error
+    else {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text(e.toString()),
+        builder: (context) => const AlertDialog(
+          title: Text("Password don't match"),
         ),
       );
     }
@@ -58,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
 
           //message, app slogan
           Text(
-            "Starbuck Delivery App",
+            "Let's create an account for you",
             style: TextStyle(
                 fontSize: 16,
                 color: Theme.of(context).colorScheme.inversePrimary),
@@ -81,19 +93,27 @@ class _LoginPageState extends State<LoginPage> {
               hintText: "Password",
               obscureText: true),
 
+          const SizedBox(height: 10),
+
+          //password textfield
+          MyTextField(
+              controller: confirmPasswordController,
+              hintText: "Confirm password",
+              obscureText: true),
+
           const SizedBox(height: 25),
 
-          //sign in button
-          MyButton(text: "Sign In", onTap: login),
+          //sign up button
+          MyButton(text: "Sign Up", onTap: register),
 
           const SizedBox(height: 25),
 
-          //not a member register now
+          //aready have an account? Login here
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Not a member?",
+                "aready have an account?",
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary),
               ),
@@ -101,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
               GestureDetector(
                 onTap: widget.onTap,
                 child: Text(
-                  "Register now",
+                  "Login now",
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontWeight: FontWeight.bold),
