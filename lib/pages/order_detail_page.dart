@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class OrderDetailPage extends StatelessWidget {
   final QueryDocumentSnapshot order;
 
-  OrderDetailPage({required this.order});
+  const OrderDetailPage({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,6 @@ class OrderDetailPage extends StatelessWidget {
             Text('Date: ${order['date'].toDate()}'),
             const SizedBox(height: 8),
             Text('Order: ${order['order']}'),
-            // Thêm các trường khác nếu cần
           ],
         ),
       ),
@@ -89,14 +88,14 @@ class OrderDetailPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Order'),
-        content: Text('Are you sure you want to delete this order?'),
+        title: const Text('Delete Order'),
+        content: const Text('Are you sure you want to delete this order?'),
         actions: [
           MaterialButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           MaterialButton(
             onPressed: () {
@@ -107,7 +106,7 @@ class OrderDetailPage extends StatelessWidget {
               Navigator.pop(context);
               Navigator.pop(context); // Go back to the previous screen
             },
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
